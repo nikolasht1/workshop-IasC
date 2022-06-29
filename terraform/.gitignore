@@ -1,0 +1,6 @@
+.env
+myvenv/
+.vscode/
+__pycache__/
+.terraform
+terraform.tfstate
