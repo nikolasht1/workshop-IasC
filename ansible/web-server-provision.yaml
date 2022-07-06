@@ -1,0 +1,44 @@
+- hosts: web-server
+  remote_user: ubuntu
+  become: true
+  #gather_facts: no
+
+
+  tasks:
+    - name: Update all packeges
+      apt:
+        update_cache: yes
+        name: "*"
+        state: latest
+
+
+    - name: Install dependencies
+      apt:
+        pkg:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - htop
+
+    - name: Install apt key
+      ansible.builtin.apt_key:
+        url: "https://download.docker.com/linux/ubuntu/gpg"
+        state: present 
+        keyring: /etc/apt/trusted.gpg.d/docker.gpg  
+
+    - name: Install docker repo
+      apt_repository:
+        repo:  "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://download.docker.com/linux/ubuntu  {{ansible_distribution_release}} stable"  
+        state: present
+        filename: docker
+
+    - name: Install docker
+      apt:
+        update_cache: yes
+        pkg:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+
