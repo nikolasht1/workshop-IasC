@@ -42,3 +42,12 @@
           - containerd.io
           - docker-compose-plugin
 
+    - name: Read-write git checkout from github
+      ansible.builtin.git:
+        repo: https://github.com/nikolasht1/workshop-docker.git
+        dest: /home/ubuntu/Project/
+
+    - name: Run `docker compose up` again
+      community.docker.docker_compose:
+        project_src: /home/ubuntu/Project/
+        state: present
