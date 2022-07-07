@@ -1,7 +1,9 @@
 - hosts: web-server
   remote_user: ubuntu
   become: true
-  #gather_facts: no
+  
+  vars_files:
+    - vars/secret
   
   tasks:
     - name: Update all packeges
@@ -45,10 +47,18 @@
           - containerd.io
           - docker-compose-plugin 
 
+    - name: Re-add a deploy key to a GitHub repository but with a different name
+      community.general.github_deploy_key:
+        owner: "{{git_user}}"
+        repository: "workshop-docker"
+        name: "ec2-deploy-key"
+        key: "{{ lookup('file', '~/.ssh/github.pub') }}"
+        username: "{{git_user}}"
+        password: "{{git_pass}}"
             
     - name: Read-write git checkout from github
       ansible.builtin.git:
-        repo: https://github.com/nikolasht1/workshop-docker.git
+        repo: git@github.com:nikolasht1/workshop-docker.git
         dest: /home/ubuntu/Project/
 
     - name: Change the working directory to somedir/ before executing the command
