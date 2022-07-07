@@ -2,8 +2,7 @@
   remote_user: ubuntu
   become: true
   #gather_facts: no
-
-
+  
   tasks:
     - name: Update all packeges
       apt:
@@ -20,6 +19,10 @@
           - gnupg
           - lsb-release
           - htop
+          - wget
+          - git
+          - mc
+          - python3-pip
 
     - name: Install apt key
       ansible.builtin.apt_key:
@@ -40,14 +43,15 @@
           - docker-ce
           - docker-ce-cli
           - containerd.io
-          - docker-compose-plugin
+          - docker-compose-plugin 
 
+            
     - name: Read-write git checkout from github
       ansible.builtin.git:
         repo: https://github.com/nikolasht1/workshop-docker.git
         dest: /home/ubuntu/Project/
 
-    - name: Run `docker compose up` again
-      community.docker.docker_compose:
-        project_src: /home/ubuntu/Project/
-        state: present
+    - name: Change the working directory to somedir/ before executing the command
+      ansible.builtin.shell: sudo docker compose up -d >> composeLog.txt
+      args:
+        chdir: /home/ubuntu/Project/

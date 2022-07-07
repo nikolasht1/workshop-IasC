@@ -33,6 +33,15 @@ resource "aws_security_group_rule" "allow_http" {
   security_group_id = aws_security_group.web_server_sg.id
 }
 
+resource "aws_security_group_rule" "allow_http_80" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.web_server_sg.id
+}
+
 resource "aws_security_group_rule" "allow_all_out" {
   type              = "egress"
   from_port         = 0
