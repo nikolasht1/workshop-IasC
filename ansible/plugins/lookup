@@ -1,0 +1,1 @@
+file_contents: "{{ lookup('file', '/home/ubuntu/.ssh/gitrsa.pub') }}"

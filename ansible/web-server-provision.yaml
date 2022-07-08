@@ -4,7 +4,8 @@
   
   vars_files:
     - vars/secret
-  
+    - plugins/lookup
+    
   tasks:
     - name: Update all packeges
       apt:
@@ -45,23 +46,49 @@
           - docker-ce
           - docker-ce-cli
           - containerd.io
-          - docker-compose-plugin 
+          - docker
 
-    - name: Re-add a deploy key to a GitHub repository but with a different name
-      community.general.github_deploy_key:
-        owner: "{{git_user}}"
-        repository: "workshop-docker"
-        name: "ec2-deploy-key"
-        key: "{{ lookup('file', '~/.ssh/github.pub') }}"
-        username: "{{git_user}}"
-        password: "{{git_pass}}"
+    - name: Install python sdk
+      pip:
+        name:
+          - docker
+          - docker-compose 
+
+    - name: Install bottle python package
+      ansible.builtin.pip:
+        name: docker-compose    
+
+    - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+      community.crypto.openssh_keypair:
+        path: /home/ubuntu/.ssh/gitrsa
+
+    - name: Read SSH public key to authorize
+      ansible.builtin.shell: cat /home/ubuntu/.ssh/gitrsa.pub
+      register: ssh_pub_key
+
+    - name: Authorize key with GitHub
+      local_action:
+        module: github_key
+        name: Access Key for Some Machine
+        token: '{{ github_access_token }}'
+        pubkey: '{{ ssh_pub_key.stdout }}'
             
     - name: Read-write git checkout from github
       ansible.builtin.git:
         repo: git@github.com:nikolasht1/workshop-docker.git
         dest: /home/ubuntu/Project/
+        
+#    - name: Run `docker-compose up`
+#      community.docker.docker_compose:
+#        project_src: /home/ubuntu/Project
+#        build: no
+#      register: output 
 
-    - name: Change the working directory to somedir/ before executing the command
-      ansible.builtin.shell: sudo docker compose up -d >> composeLog.txt
-      args:
-        chdir: /home/ubuntu/Project/
+
+
+
+
+#   - name: Change the working directory to somedir/ before executing the command
+#      ansible.builtin.shell: sudo docker compose up -d >> composeLog.txt
+#     args:
+#        chdir: /home/ubuntu/Project/
