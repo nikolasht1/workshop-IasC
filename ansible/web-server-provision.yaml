@@ -4,7 +4,6 @@
   
   vars_files:
     - vars/secret
-    - plugins/lookup
     
   tasks:
     - name: Update all packeges
@@ -56,39 +55,28 @@
 
     - name: Install bottle python package
       ansible.builtin.pip:
-        name: docker-compose    
+        name: docker-compose  
 
-    - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
-      community.crypto.openssh_keypair:
-        path: /home/ubuntu/.ssh/gitrsa
+    - name: copy key to remote host
+      copy:
+        src: /home/mykola/.ssh/id_rsa
+        dest: /root/.ssh
 
-    - name: Read SSH public key to authorize
-      ansible.builtin.shell: cat /home/ubuntu/.ssh/gitrsa.pub
-      register: ssh_pub_key
+    - name: Check chmod key
+      file:
+        path: /root/.ssh/id_rsa
+        state: file
+        owner: root
+        group: root
+        mode: 0600   
 
-    - name: Authorize key with GitHub
-      local_action:
-        module: github_key
-        name: Access Key for Some Machine
-        token: '{{ github_access_token }}'
-        pubkey: '{{ ssh_pub_key.stdout }}'
-            
     - name: Read-write git checkout from github
       ansible.builtin.git:
         repo: git@github.com:nikolasht1/workshop-docker.git
         dest: /home/ubuntu/Project/
         
-#    - name: Run `docker-compose up`
-#      community.docker.docker_compose:
-#        project_src: /home/ubuntu/Project
-#        build: no
-#      register: output 
-
-
-
-
-
-#   - name: Change the working directory to somedir/ before executing the command
-#      ansible.builtin.shell: sudo docker compose up -d >> composeLog.txt
-#     args:
-#        chdir: /home/ubuntu/Project/
+    - name: Run `docker-compose up`
+      community.docker.docker_compose:
+        project_src: /home/ubuntu/Project
+        build: no
+      register: output 
