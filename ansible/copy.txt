@@ -1,0 +1,23 @@
+   - name: Check chmod key
+      file:
+        path: /root/.ssh/id_rsa
+        state: file
+        owner: root
+        group: root
+        mode: 0600
+
+    - name: copy key to remote host
+      copy:
+        src: /home/mykola/.ssh/id_rsa
+        dest: /home/ubuntu/.ssh
+        
+    - name: Check chmod key
+      file:
+        path: /home/ubuntu/.ssh/id_rsa
+        state: file
+        owner: ubuntu
+        group: ubuntu
+        mode: 0600
+
+
+ECDSA key fingerprint

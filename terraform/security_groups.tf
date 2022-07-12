@@ -2,13 +2,9 @@ data "aws_vpc" "default_vpc_data" {
   default = true
 }
 
-
-
 resource "aws_security_group" "web_server_sg" {
   name        = "web_server_sg"
   vpc_id      = data.aws_vpc.default_vpc_data.id
-
-  
 
   tags = {
     Name = "web_server_sg"

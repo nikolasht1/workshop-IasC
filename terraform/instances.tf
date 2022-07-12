@@ -32,3 +32,17 @@ resource "aws_instance" "web" {
     Name = "web"
   }
 }
+
+resource "aws_instance" "web1" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  key_name = aws_key_pair.workshop.key_name
+
+  vpc_security_group_ids = [
+    aws_security_group.web_server_sg.id
+  ]
+
+  tags = {
+    Name = "web1"
+  }
+}
