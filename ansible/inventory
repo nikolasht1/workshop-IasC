@@ -1,3 +1,2 @@
-[webservers]
-web-server ansible_host= 3.73.116.209
-web1-server ansible_host= 18.193.75.165
+web-server ansible_host=3.73.116.209
+web1-server ansible_host=18.193.75.165

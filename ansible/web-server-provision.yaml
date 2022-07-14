@@ -70,13 +70,26 @@
         group: root
         mode: 0600
 
+    - name: copy key to remote host
+      copy:
+        src: /home/mykola/.ssh/id_rsa
+        dest: /home/ubuntu/.ssh
+
+    - name: Check chmod key
+      file:
+        path: /home/ubuntu/.ssh/id_rsa
+        state: file
+        owner: ubuntu
+        group: ubuntu
+        mode: 0600    
+
     - name: Read-write git checkout from github
       ansible.builtin.git:
         repo: git@github.com:nikolasht1/workshop-docker.git
         dest: /home/ubuntu/Project/
         
-    - name: Run `docker-compose up`
-      community.docker.docker_compose:
-        project_src: /home/ubuntu/Project
-        build: no
-      register: output 
+#    - name: Run `docker-compose up`
+#      community.docker.docker_compose:
+#        project_src: /home/ubuntu/Project
+#        build: no
+#      register: output 
